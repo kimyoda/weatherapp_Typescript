@@ -1,24 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
+import Loader from "./components/Loader/Loader";
 import "./App.css";
 
-function App() {
+import sun from "../../weaterapp/src/assets/images/sun.jpg";
+import SearchBar from "./components/SearchBar/SearchBar";
+
+const App = () => {
+  const [isLoding, setIsLoding] = useState<boolean>(false);
+
+  const generateBackgroundStyle: { backgroundImage: string } = {
+    backgroundImage: `url(${sun})`,
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="weather-app">
+      {isLoding && <Loader />}
+      <div className="background" style={generateBackgroundStyle}></div>
+      <SearchBar onSearchClick={() => {}} />
     </div>
   );
-}
+};
 
 export default App;

@@ -1,6 +1,7 @@
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
+import "./search-bar.css";
 
 export type SearchBarProps = {
   onSearchClick: (value: string) => void;
