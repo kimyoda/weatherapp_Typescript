@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CurrentWeather from "./components/CurrentWeather/CurrentWeater";
 import Loader from "./components/Loader/Loader";
 import SearchBar from "./components/SearchBar/SearchBar";
-import { getWeather } from "./services/WeatherService";
+import { getForecast, getWeather } from "./services/WeatherService";
 import "./App.css";
 
 import sun from "../../weaterapp/src/assets/images/sun.jpg";
@@ -14,10 +14,12 @@ import snow from "../../weaterapp/src/assets/images/snow.jpg";
 import thunder from "../../weaterapp/src/assets/images/thunder.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import Forecast from "./components/Forecast/Forecast";
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>(null);
+  const [forecastData, setForecastData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const weatherImages: Record<string, string> = {
@@ -43,11 +45,20 @@ const App = () => {
     backgroundImage: `url(${weatherImages[data?.weather[0]?.description] || sun})`,
   };
 
-  const handleSearch = (city: string) => {
-    getWeather(city)
+  const getAllData = (cityName: string) => {
+    setIsLoading(true);
+    setErrorMessage(""); // 새로운 검색 전에 오류 메시지를 초기화합니다.
+
+    getWeather(cityName)
       .then((result) => {
         setData(result.data);
-        setErrorMessage("정확한 도시 이름을 입력해주세요!");
+
+        const lat = result.data.coord.lat;
+        const lon = result.data.coord.lon;
+
+        getForecast(lat, lon).then((result) => {
+          setForecastData(result.data);
+        });
       })
       .catch(() => {
         setErrorMessage("정확한 도시 이름을 입력해주세요!");
@@ -57,18 +68,14 @@ const App = () => {
       });
   };
 
+  const handleSearch = (city: string) => {
+    getAllData(city);
+  };
+
   useEffect(() => {
     const defaultCity = "Seoul";
-    setIsLoading(true);
 
-    getWeather(defaultCity)
-      .then((result) => {
-        setData(result.data);
-      })
-      .catch(console.error)
-      .finally(() => {
-        setIsLoading(false);
-      });
+    getAllData(defaultCity);
   }, []);
 
   return (
@@ -84,6 +91,7 @@ const App = () => {
         )}
         <SearchBar onSearchClick={handleSearch} />
         <CurrentWeather data={data} />
+        <Forecast forecastData={forecastData} />
       </div>
     </div>
   );
