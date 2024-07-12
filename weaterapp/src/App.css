@@ -35,4 +35,17 @@ ul {
 
     z-index: -1;
   }
+
+  .error-message {
+    width: fit-content;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    color: darkred;
+
+    .icon-warning {
+      margin-right: 10px;
+    }
+  }
 }

@@ -12,10 +12,13 @@ import rain from "../../weaterapp/src/assets/images/rain.jpg";
 import sky from "../../weaterapp/src/assets/images/sky.jpg";
 import snow from "../../weaterapp/src/assets/images/snow.jpg";
 import thunder from "../../weaterapp/src/assets/images/thunder.jpg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWarning } from "@fortawesome/free-solid-svg-icons";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const weatherImages: Record<string, string> = {
     "clear sky": sky,
@@ -44,8 +47,11 @@ const App = () => {
     getWeather(city)
       .then((result) => {
         setData(result.data);
+        setErrorMessage("정확한 도시 이름을 입력해주세요!");
       })
-      .catch(console.error)
+      .catch(() => {
+        setErrorMessage("정확한 도시 이름을 입력해주세요!");
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -70,6 +76,12 @@ const App = () => {
       {isLoading && <Loader />}
       <div className="background" style={generateBackgroundStyle}></div>
       <div className="container">
+        {errorMessage && (
+          <p className="error-message">
+            <FontAwesomeIcon icon={faWarning} className="icon-warning" />
+            {errorMessage}
+          </p>
+        )}
         <SearchBar onSearchClick={handleSearch} />
         <CurrentWeather data={data} />
       </div>
